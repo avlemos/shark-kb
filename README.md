@@ -89,7 +89,7 @@ For that, I changed the date/time on my computer, so I could see some of the fie
 28000000000000d707e901060a130a00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 ```
 
-So you can start to see that some bits (no pun intended) are fixed, while others change... Quite simply, it was 4 bits to define day, month, hour, minutes and seconds, and 8 bits to define the year.
+So you can start to see that some bits (no pun intended) are fixed, while others change... Quite simply, it was 8 bits to define day, month, hour, minutes and seconds, and 16 bits to define the year.
 
 Without spoiling it too much for you, 2025 in Hex is 0x7e90. You can check how the payload is built on [payload.rs](src/payload.rs).
 
