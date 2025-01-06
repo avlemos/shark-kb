@@ -25,6 +25,7 @@ fn main() {
             std::process::exit(1);
         }
     };
+    println!("Time set with success");
 }
 
 fn find_device() -> Result<HidDevice, String> {
