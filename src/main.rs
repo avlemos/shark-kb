@@ -1,38 +1,45 @@
 extern crate hidapi;
 
-use hidapi::HidApi;
+use hidapi::{HidApi, HidDevice};
 
 mod payload;
 use payload::TimeHexGenerator;
 
 /*
 you can use hid_device_list() to list all the connected HID devices in case you need to make changes
-and USBDeview to assist (https://www.nirsoft.net/utils/usb_devices_view.html)
+and USBDeview to assist (https://www.nirsoft.net/utils/usb_devices_view.html).
+Since this keyboard has multiple interfaces, you need to specify which will accept the HID message.
 */
 const VENDOR_ID: u16 = 0x3151;
 const PRODUCT_ID: u16 = 0x4015;
+const INTERFACE_NUMBER: i32 = 2;
 
 fn main() {
-    let api = HidApi::new().unwrap();
-    // Connect to device using its VID and PID
-    let (vid, pid) = (VENDOR_ID, PRODUCT_ID);
-    let device = api.open(vid, pid).unwrap();
     let hex_message = TimeHexGenerator::new().generate_hex();
-
-    println!("{:?}", hex_message);
-    let res = device.send_feature_report(&hex_message).expect("Failed to write data");
-    println!("Wrote: {:?} byte(s)", res);
+    let device = find_device().unwrap();
+    device
+        .send_feature_report(&hex_message)
+        .expect("Failed to write data");
 }
 
-fn hid_device_list() {
+fn find_device() -> Result<HidDevice, String> {
     match HidApi::new() {
         Ok(api) => {
             for device in api.device_list() {
-                println!("{:04x}:{:04x}", device.vendor_id(), device.product_id());
+                if device.vendor_id() == VENDOR_ID
+                    && device.product_id() == PRODUCT_ID
+                    && device.interface_number() == INTERFACE_NUMBER
+                {
+                    // Return the matching device
+                    return Ok(device.open_device(&api).unwrap());
+                }
             }
+            // Return an error if no matching device is found
+            Err("Device not found".to_string())
         }
         Err(e) => {
-            eprintln!("Error: {}", e);
+            // Return an error if we couldn't initialize HidApi
+            Err(format!("Error initializing HidApi: {}", e))
         }
     }
 }
