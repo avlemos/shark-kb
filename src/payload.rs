@@ -1,7 +1,7 @@
 use chrono::prelude::*;
 
 pub(crate) struct TimeHexGenerator {
-    prefix: [u8; 8],
+    prefix: [u8; 7],
     suffix: [u8; 50],
 }
 
@@ -10,7 +10,7 @@ pub(crate) struct TimeHexGenerator {
 impl TimeHexGenerator {
     pub fn new() -> Self {
         TimeHexGenerator {
-            prefix: [0x09, 0x28, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
+            prefix: [0x28, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
             suffix: [0x00; 50],
         }
     }
@@ -37,15 +37,7 @@ impl TimeHexGenerator {
         message.push(second as u8);
         message.extend_from_slice(&self.suffix);
 
-        // Convert the message to a hexadecimal string
-        // let mut hex_string = String::new();
-        // for byte in message {
-        //     write!(&mut hex_string, "{:02x}", byte).unwrap();
-        // }
-
-        // println!("{:?}", &hex_string);
         message
-        //return Ok(Self::hex_to_bytes(&hex_string).expect("Invalid hex string"));
     }
 
 }

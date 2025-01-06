@@ -18,8 +18,8 @@ fn main() {
     let (vid, pid) = (VENDOR_ID, PRODUCT_ID);
     let device = api.open(vid, pid).unwrap();
     let hex_message = TimeHexGenerator::new().generate_hex();
-    
-    // // Write data to device
+
+    println!("{:?}", hex_message);
     let res = device.send_feature_report(&hex_message).expect("Failed to write data");
     println!("Wrote: {:?} byte(s)", res);
 }
