@@ -16,10 +16,15 @@ const INTERFACE_NUMBER: i32 = 2;
 
 fn main() {
     let hex_message = TimeHexGenerator::new().generate_hex();
-    let device = find_device().unwrap();
-    device
-        .send_feature_report(&hex_message)
-        .expect("Failed to write data");
+    match find_device() {
+        Ok(d) => d
+            .send_feature_report(&hex_message)
+            .expect("Failed to write data"),
+        Err(e) => {
+            eprintln!("{}", e);
+            std::process::exit(1);
+        }
+    };
 }
 
 fn find_device() -> Result<HidDevice, String> {
@@ -35,7 +40,7 @@ fn find_device() -> Result<HidDevice, String> {
                 }
             }
             // Return an error if no matching device is found
-            Err("Device not found".to_string())
+            Err("Device not found :-(".to_string())
         }
         Err(e) => {
             // Return an error if we couldn't initialize HidApi
